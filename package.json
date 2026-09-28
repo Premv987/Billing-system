@@ -1,0 +1,22 @@
+{
+  "name": "patel-r-mart-billing-system",
+  "version": "1.0.0",
+  "description": "Full-Stack Inventory & Billing Management System for Patel R Mart, Titwala (E) - CEP 2026-27",
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "setup:db": "cd backend && npx prisma db push && node prisma/seed.js"
+  },
+  "keywords": [
+    "billing-counter",
+    "checkout",
+    "inventory",
+    "billing",
+    "retail",
+    "supermarket",
+    "cep-project"
+  ],
+  "author": "B.Sc. Computer Science (CEP)",
+  "license": "ISC"
+}

@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Production builds
+dist/
+**/dist/
+build/
+
+# Local Environment Variables
+.env.local
+
+# Editor & OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Database temporary files
+*.db-journal

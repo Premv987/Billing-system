@@ -1,0 +1,102 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String             @id @default(uuid())
+  name              String
+  email             String             @unique
+  passwordHash      String
+  role              String             @default("STAFF") // ADMIN, STAFF, INVENTORY_MANAGER
+  status            String             @default("ACTIVE")
+  createdAt         DateTime           @default(now())
+  sales             Sale[]
+  stockTransactions StockTransaction[]
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  products    Product[]
+}
+
+model Supplier {
+  id          String    @id @default(uuid())
+  name        String
+  phone       String
+  email       String?
+  address     String?
+  gstin       String?
+  products    Product[]
+}
+
+model Product {
+  id                String             @id @default(uuid())
+  barcode           String             @unique
+  sku               String             @unique
+  name              String
+  brand             String?
+  categoryId        String
+  category          Category           @relation(fields: [categoryId], references: [id])
+  supplierId        String?
+  supplier          Supplier?          @relation(fields: [supplierId], references: [id])
+  purchasePrice     Float              @default(0.0)
+  sellingPrice      Float              @default(0.0)
+  quantity          Int                @default(0)
+  minimumStock      Int                @default(10)
+  expiryDate        DateTime?
+  status            String             @default("ACTIVE") // ACTIVE, INACTIVE
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  saleItems         SaleItem[]
+  stockTransactions StockTransaction[]
+}
+
+model Sale {
+  id             String        @id @default(uuid())
+  invoiceNumber  String        @unique
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  customerPhone  String?
+  customerName   String?
+  subtotal       Float         @default(0.0)
+  discount       Float         @default(0.0)
+  cgst           Float         @default(0.0)
+  sgst           Float         @default(0.0)
+  totalAmount    Float         @default(0.0)
+  paymentMethod  String        @default("CASH") // CASH, UPI
+  cashTendered   Float?
+  changeReturned Float?
+  paymentStatus  String        @default("COMPLETED")
+  createdAt      DateTime      @default(now())
+  items          SaleItem[]
+}
+
+model SaleItem {
+  id        String   @id @default(uuid())
+  saleId    String
+  sale      Sale     @relation(fields: [saleId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Float
+  total     Float
+}
+
+model StockTransaction {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  type      String   // STOCK_IN, STOCK_OUT, SALE, ADJUSTMENT
+  quantity  Int
+  reference String?  // Challan or Invoice #
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
